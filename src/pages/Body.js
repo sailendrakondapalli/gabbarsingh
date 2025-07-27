@@ -25,30 +25,119 @@ class Body extends React.Component {
 
 
   
- componentDidMount() {
-  const user = JSON.parse(localStorage.getItem("user"));
-  if (user && (user.city || user.address)) {
-    const city = (user.city || user.address).trim();
+componentDidMount() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const { latitude, longitude } = position.coords;
+        console.log("📍 User GPS:", latitude, longitude);
 
-    fetch(`https://backendta-fr54.onrender.com/api/products?city=${city}`)
-      .then((res) => res.json())
-      .then((data) => {
-        const shuffled = this.shuffleArray(data);
-        this.setState({
-          userCity: city,
-          shuffledProducts: shuffled,
-          filteredProducts: shuffled
-        }); 
-      })
-      .catch((error) => {
-        console.error("❌ Error fetching products from API:", error);
-      });
+        try {
+          // Step 1: Fetch nearby cities from Overpass API
+          const overpassQuery = `
+            [out:json];
+            (
+              node(around:5000,${latitude},${longitude})["place"];
+            );
+            out body;
+          `;
+          const overpassURL = `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(overpassQuery)}`;
+
+          const response = await fetch(overpassURL);
+          const data = await response.json();
+
+          // Step 2: Extract unique nearby city names
+          const citySet = new Set();
+          data.elements.forEach((el) => {
+            if (el.tags && el.tags.name) {
+              citySet.add(el.tags.name.trim());
+            }
+          });
+          const nearbyCities = Array.from(citySet);
+          console.log("🗺 Nearby Cities (5km):", nearbyCities);
+
+          if (nearbyCities.length > 0) {
+            const user = JSON.parse(localStorage.getItem("user")) || {};
+            user.city = nearbyCities[0]; // Save primary one if needed
+            localStorage.setItem("user", JSON.stringify(user));
+
+            // Step 3: Fetch products from your backend with cities list
+            const cityQueryParam = nearbyCities.map(encodeURIComponent).join(",");
+            const productsRes = await fetch(
+              `https://backendta-fr54.onrender.com/api/products?cities=${cityQueryParam}`
+            );
+            const products = await productsRes.json();
+            const shuffled = this.shuffleArray(products);
+
+            this.setState({
+              userCity: nearbyCities[0],
+              shuffledProducts: shuffled,
+              filteredProducts: shuffled
+            });
+          } else {
+            console.warn("⚠️ No nearby cities found");
+            this.setState({ userCity: "Unknown" });
+          }
+        } catch (err) {
+          console.error("❌ Error with Overpass API or product fetch:", err);
+        }
+      },
+      (error) => {
+        console.error("❌ Geolocation error:", error.message);
+        this.fallbackToIPorLocalStorage();
+      }
+    );
   } else {
-    console.warn("⚠️ No city found in user data");
+    console.warn("⚠️ Geolocation not supported");
+    this.fallbackToIPorLocalStorage();
   }
 
   window.addEventListener("scroll", this.handleScroll);
 }
+
+
+fallbackToIPorLocalStorage() {
+  fetch("https://ipapi.co/json/")
+    .then((res) => res.json())
+    .then((locationData) => {
+      const city = locationData.city?.trim();
+      if (city) {
+        console.log("🌐 IP-based city:", city);
+        const user = JSON.parse(localStorage.getItem("user")) || {};
+        user.city = city;
+        localStorage.setItem("user", JSON.stringify(user));
+
+        fetch(`https://backendta-fr54.onrender.com/api/products?cities=${encodeURIComponent(city)}`)
+          .then((res) => res.json())
+          .then((products) => {
+            const shuffled = this.shuffleArray(products);
+            this.setState({
+              userCity: city,
+              shuffledProducts: shuffled,
+              filteredProducts: shuffled
+            });
+          });
+      }
+    })
+    .catch(() => {
+      const user = JSON.parse(localStorage.getItem("user"));
+      if (user?.city) {
+        const city = user.city.trim();
+        fetch(`https://backendta-fr54.onrender.com/api/products?cities=${encodeURIComponent(city)}`)
+          .then((res) => res.json())
+          .then((products) => {
+            const shuffled = this.shuffleArray(products);
+            this.setState({
+              userCity: city,
+              shuffledProducts: shuffled,
+              filteredProducts: shuffled
+            });
+          });
+      }
+    });
+}
+
+
 
 
   componentWillUnmount() {
