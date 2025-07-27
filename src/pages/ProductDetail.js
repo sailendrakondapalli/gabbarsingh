@@ -11,7 +11,11 @@ function ProductDetail() {
 
   const user = JSON.parse(localStorage.getItem("user"));
   const userEmail = user?.email;
-
+if (!user) {
+    alert("Please login to access this page.");
+    navigate("/login");
+    return null;
+  }
   const handleCashOnDelivery = async () => {
     setLoading(true);
     try {
