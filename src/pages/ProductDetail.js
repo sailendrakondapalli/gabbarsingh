@@ -17,11 +17,11 @@ function ProductDetail() {
 
   // Check login
   useEffect(() => {
-    if (!user) {
-      alert("Please login to access this page.");
-      navigate("/login");
-    }
-  }, []);
+  if (!item) {
+    navigate("/"); // Redirect if no item found
+  }
+}, []);
+
 
   // Get city from GPS → IP → localStorage
   useEffect(() => {
@@ -152,14 +152,7 @@ function ProductDetail() {
     rzp.open();
   };
 
-  const handleBuyNow = () => {
-  if (!user || user.role !== "user") {
-    alert("Please login as a user to place an order.");
-    navigate("/login");
-    return;
-  }
-  setShowPaymentOptions(true);
-};
+  const handleBuyNow = () => setShowPaymentOptions(true);
 
   if (!item) return <p>No product data</p>;
 
@@ -193,23 +186,29 @@ function ProductDetail() {
       <p><strong>Price:</strong> ₹{item.cost}</p>
       <p><strong>Stock:</strong> {item.stock}</p>
 
-      {!showPaymentOptions && (
-        <button onClick={handleBuyNow} disabled={loading}>
-          {loading ? "Processing..." : "Buy Now"}
-        </button>
-      )}
+      {user ? (
+  !showPaymentOptions && (
+    <button onClick={handleBuyNow} disabled={loading}>
+      {loading ? "Processing..." : "Buy Now"}
+    </button>
+  )
+) : (
+  <p style={{ color: "red", marginTop: "10px" }}>Please login to book this product.</p>
+)}
 
-      {showPaymentOptions && (
-        <div style={{ marginTop: "10px" }}>
-          <h4>Select Payment Method:</h4>
-          <button onClick={handleRazorpayPayment} disabled={loading}>
-            Pay with Razorpay
-          </button>
-          <button onClick={handleCashOnDelivery} disabled={loading}>
-            Cash on Delivery
-          </button>
-        </div>
-      )}
+
+      {showPaymentOptions && user && (
+  <div style={{ marginTop: "10px" }}>
+    <h4>Select Payment Method:</h4>
+    <button onClick={handleRazorpayPayment} disabled={loading}>
+      Pay with Razorpay
+    </button>
+    <button onClick={handleCashOnDelivery} disabled={loading}>
+      Cash on Delivery
+    </button>
+  </div>
+)}
+
 
       {loading && (
         <div className="loading-overlay">
