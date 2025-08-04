@@ -17,14 +17,12 @@ class Body extends React.Component {
       visibleProducts: 4,
       userCity: "",
       filteredProducts: [],
-      shuffledProducts: []
+      shuffledProducts: [],
+      loading: true
     };
   }
 
 
-
-
-  
 componentDidMount() {
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(
@@ -37,7 +35,7 @@ componentDidMount() {
           const overpassQuery = `
             [out:json];
             (
-              node(around:5000,${latitude},${longitude})["place"];
+              node(around:10000,${latitude},${longitude})["place"];
             );
             out body;
           `;
@@ -72,7 +70,9 @@ componentDidMount() {
             this.setState({
               userCity: nearbyCities[0],
               shuffledProducts: shuffled,
-              filteredProducts: shuffled
+              filteredProducts: shuffled,
+      loading: false
+
             });
           } else {
             console.warn("⚠️ No nearby cities found");
@@ -114,7 +114,8 @@ fallbackToIPorLocalStorage() {
             this.setState({
               userCity: city,
               shuffledProducts: shuffled,
-              filteredProducts: shuffled
+              filteredProducts: shuffled,
+              loading: false
             });
           });
       }
@@ -179,60 +180,66 @@ fallbackToIPorLocalStorage() {
 
     const visibleList = filteredProducts.slice(0, visibleProducts);
 
-    return (
-      <div>
-        <div className="all">
-          {images.map((item, index) => (
-            <Link
-              to={`/category/${item.name.toLowerCase()}`}
-              key={index}
-              style={{ textDecoration: "none", color: "inherit" }}
-            >
-              <div>
-                <img src={item.src} alt={item.name} />
-                <p>{item.name}</p>
-              </div>
-            </Link>
-          ))}
-        </div>
+   return (
+  <div>
+    <div className="all">
+      {images.map((item, index) => (
+        <Link
+          to={`/category/${item.name.toLowerCase()}`}
+          key={index}
+          style={{ textDecoration: "none", color: "inherit" }}
+        >
+          <div>
+            <img src={item.src} alt={item.name} />
+            <p>{item.name}</p>
+          </div>
+        </Link>
+      ))}
+    </div>
 
-        <hr />
+    <hr />
 
-        <div className="product-grid">
-          {visibleList.map((item, index) => (
-            <Link
-              to={`/product/${item.name}`}
-              state={item}
-              key={index}
-              style={{ textDecoration: "none", color: "inherit" }}
-            >
-              <div className="product-card">
-<img src={item.src} alt={item.name} />
+    <div className="product-grid">
+      {this.state.loading ? (
+        <div className="loader-container">
+  <div className="spinner"></div>
+  <p>Loading products near you...</p>
+</div>
+      ) : visibleList.length === 0 ? (
+        <p style={{ color: "red", textAlign: "center" }}>
+          No products found for your city ({userCity})
+        </p>
+      ) : (
+        visibleList.map((item, index) => (
+          <Link
+            to={`/product/${item.name}`}
+            state={item}
+            key={index}
+            style={{ textDecoration: "none", color: "inherit" }}
+          >
+            <div className="product-card">
+              <img src={item.src} alt={item.name} />
+              <p className="product-name">{item.name}</p>
+              <p>From: {item.store}</p>
+              {item.unit !== undefined && (
+                <p className="product-unit">Quantity: {item.unit}</p>
+              )}
+              <p className="product-cost">Cost: ₹{item.cost}</p>
+            </div>
+          </Link>
+        ))
+      )}
+    </div>
 
-                <p className="product-name">{item.name}</p>
-                <p>From: {item.store}</p>
-                {item.unit !== undefined && (
-    <p className="product-unit">Quantity: {item.unit}</p>
-  )}
-                <p className="product-cost">Cost: ₹{item.cost}</p>
-              </div>
-            </Link>
-          ))}
+    {!this.state.loading &&
+      visibleProducts < filteredProducts.length && (
+        <p style={{ textAlign: "center", padding: "20px" }}>
+          Scroll to load more...
+        </p>
+      )}
+  </div>
+);
 
-          {visibleList.length === 0 && (
-            <p style={{ color: "red", textAlign: "center" }}>
-
-              No products found for your city ({userCity})
-              
-            </p>
-          )}
-        </div>
-
-        {visibleProducts < filteredProducts.length && (
-          <p style={{ textAlign: "center", padding: "20px" }}> Scroll to load more...</p>
-        )}
-      </div>
-    );
   }
 }
 

@@ -12,8 +12,8 @@ class AdminPanel extends Component {
       store: "",
       stock: "",
       src: null,
-      unit: "", // <- NEW
-  showUnit: false,
+      unit: "",
+      showUnit: false,
       message: "",
       user: null,
       isAuthorized: false,
@@ -33,54 +33,53 @@ class AdminPanel extends Component {
 
   handleChange = (e) => {
     const { name, value } = e.target;
-     if (name === "category") {
-    const lower = value.toLowerCase();
-    this.setState({
-      category: value,
-      showUnit: lower === "food", // show unit dropdown only for "food"
-    });
-  } else {
-    this.setState({ [name]: value });
-  }
-    
+
+    if (name === "category") {
+      const lower = value.toLowerCase();
+      this.setState({
+        category: value,
+        showUnit: lower === "food" || lower === "biriyani",
+      });
+    } else {
+      this.setState({ [name]: value });
+    }
   };
 
   handleFileChange = (e) => {
     this.setState({ src: e.target.files[0] });
   };
 
- handleSubmit = async (e) => {
-  e.preventDefault();
-  const { name, category, cost, store, stock, src, city, user, unit  } = this.state;
+  handleSubmit = async (e) => {
+    e.preventDefault();
+    const { name, category, cost, store, stock, src, city, user, unit } = this.state;
 
-  if (!name || !category || !cost || !store || !stock || !src || !city || (this.state.showUnit && !unit)) {
-    this.setState({ message: "Please fill in all fields." });
-    return;
-  }
+    if (!name || !category || !cost || !store || !stock || !src || !city || (this.state.showUnit && !unit)) {
+      this.setState({ message: "Please fill in all fields." });
+      return;
+    }
 
-  const formData = new FormData();
-  formData.append("name", name);
-  formData.append("category", category);
-  formData.append("cost", cost);
-  formData.append("store", store);
-  formData.append("stock", stock);
-  formData.append("city", city);
-  formData.append("image", src); // image field name expected in multer
-  formData.append("adminEmail", user.email);
-  formData.append("unit", unit);
+    const formData = new FormData();
+    formData.append("name", name);
+    formData.append("category", category);
+    formData.append("cost", cost);
+    formData.append("store", store);
+    formData.append("stock", stock);
+    formData.append("city", city);
+    formData.append("image", src);
+    formData.append("adminEmail", user.email);
+    formData.append("unit", unit);
 
-  try {
-    const res = await axios.post("https://backendta-fr54.onrender.com/api/add-product", formData);
-    this.setState({ message: "✅ Product uploaded successfully!" });
-  } catch (error) {
-    console.error(error);
-    this.setState({ message: "❌ Failed to upload product." });
-  }
-};
-
+    try {
+      const res = await axios.post("https://backendta-fr54.onrender.com/api/add-product", formData);
+      this.setState({ message: "✅ Product uploaded successfully!" });
+    } catch (error) {
+      console.error(error);
+      this.setState({ message: "❌ Failed to upload product." });
+    }
+  };
 
   render() {
-    const { isAuthorized, message } = this.state;
+    const { isAuthorized, message, category, city, unit } = this.state;
 
     if (!isAuthorized) {
       return (
@@ -92,33 +91,86 @@ class AdminPanel extends Component {
 
     return (
       <div className="admin-panel">
-      <div style={{ maxWidth: "500px", margin: "auto", padding: "20px" }}>
-        <h2>🛒 Admin Product Upload</h2>
-        <form onSubmit={this.handleSubmit} encType="multipart/form-data">
-          <input type="text" name="name" placeholder="Product Name" onChange={this.handleChange} /><br /><br />
-          <input type="text" name="category" placeholder="Category" onChange={this.handleChange} /><br /><br />
-          <input type="text" name="cost" placeholder="Cost" onChange={this.handleChange} /><br /><br />
-          <input type="text" name="store" placeholder="Store Name" onChange={this.handleChange} /><br /><br />
-          <input type="text" name="stock" placeholder="Stock Count" onChange={this.handleChange} /><br /><br />
-          <input type="text" name="city" placeholder="City" onChange={this.handleChange} /><br /><br />
-          <input type="file" onChange={this.handleFileChange} /><br /><br />
-          {this.state.showUnit && (
-  <>
-    <select name="unit" value={this.state.unit} onChange={this.handleChange}>
-      <option value="">--Select Quantity--</option>
-      <option value="0.5kg">0.5 kg</option>
-      <option value="1kg">1 kg</option>
-      <option value="2kg">2 kg</option>
-    </select><br /><br />
-  </>
-)}
+        <div style={{ maxWidth: "500px", margin: "auto", padding: "20px" }}>
+          <h2>🛒 Admin Product Upload</h2>
+          <form onSubmit={this.handleSubmit} encType="multipart/form-data">
+            <input
+              type="text"
+              name="name"
+              placeholder="Product Name"
+              onChange={this.handleChange}
+            /><br /><br />
 
-          <button type="submit">Upload Product</button>
-        </form>
-        {message && (
-          <p style={{ marginTop: "20px", color: message.includes("✅") ? "green" : "red" }}>{message}</p>
-        )}
-      </div>
+            {/* Category Dropdown */}
+            <select name="category" value={category} onChange={this.handleChange}>
+              <option value="">-- Select Category --</option>
+              <option value="Biriyani">Biriyani</option>
+              <option value="Roti">Roti</option>
+              <option value="Pickle">Pickle</option>
+              <option value="Groceries">Groceries</option>
+              <option value="Laptops">Laptops</option>
+              <option value="Mobiles">Mobiles</option>
+              <option value="Fashion">Fashion</option>
+              <option value="Makeup">Makeup</option>
+              <option value="Food">Food</option>
+            </select><br /><br />
+
+            <input
+              type="text"
+              name="cost"
+              placeholder="Cost"
+              onChange={this.handleChange}
+            /><br /><br />
+
+            <input
+              type="text"
+              name="store"
+              placeholder="Store Name"
+              onChange={this.handleChange}
+            /><br /><br />
+
+            <input
+              type="text"
+              name="stock"
+              placeholder="Stock Count"
+              onChange={this.handleChange}
+            /><br /><br />
+
+            {/* City Dropdown */}
+            <select name="city" value={city} onChange={this.handleChange}>
+              <option value="">-- Select City --</option>
+              <option value="Vizianagaram">Vizianagaram</option>
+              <option value="Visakhapatnam">Visakhapatnam</option>
+              <option value="Tuni">Tuni</option>
+              <option value="Rajahmundry">Rajahmundry</option>
+              <option value="Kakinada">Kakinada</option>
+              <option value="Hyderabad">Hyderabad</option>
+              <option value="Vijayawada">Vijayawada</option>
+            </select><br /><br />
+
+            <input type="file" onChange={this.handleFileChange} /><br /><br />
+
+            {/* Unit selector for food items */}
+            {this.state.showUnit && (
+              <>
+                <select name="unit" value={unit} onChange={this.handleChange}>
+                  <option value="">-- Select Quantity --</option>
+                  <option value="0.5kg">0.5 kg</option>
+                  <option value="1kg">1 kg</option>
+                  <option value="2kg">2 kg</option>
+                </select><br /><br />
+              </>
+            )}
+
+            <button type="submit">Upload Product</button>
+          </form>
+
+          {message && (
+            <p style={{ marginTop: "20px", color: message.includes("✅") ? "green" : "red" }}>
+              {message}
+            </p>
+          )}
+        </div>
       </div>
     );
   }

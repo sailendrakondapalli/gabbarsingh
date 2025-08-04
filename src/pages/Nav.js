@@ -44,7 +44,7 @@ class Nav extends React.Component {
             <img src="/images/wish-list.png" alt="WishList" />
             <img src="/images/basket.png" alt="Cart" />
             
-           <a href="/login"><img  src="/images/user.png" alt="User" /></a><p> ⬅️login</p>
+           <a href="/login"><img  src="/images/user.png" alt="User"  /></a>
           </div>
         </div>
       </div>

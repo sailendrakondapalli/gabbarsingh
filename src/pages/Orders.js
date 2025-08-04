@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 class Orders extends React.Component {
   constructor(props) {
@@ -45,16 +46,24 @@ class Orders extends React.Component {
         <h2>Your Orders</h2>
         <ul>
           {orders.map((order, index) => (
-            <li key={index} style={{ marginBottom: "10px" }}>
-              {/* <img src={`/images/${order.item.src}`} alt={order.item.name} style={{ width: "100px" }} /> */}
-<img src={order.item.src} alt={order.item.name} style={{ width: "100px" }} />
+            <Link
+  to={`/product/${order.item.name}`}
+  state={order.item}
+  key={index}
+  style={{ textDecoration: "none", color: "inherit" }}
+>
+  <li style={{ marginBottom: "10px", border: "1px solid #ccc", padding: "10px" }}>
+    <img src={order.item.src} alt={order.item.name} style={{ width: "100px" }} />
+    <p><strong>{order.item.name}</strong></p>
+    <p>Store: {order.item.store}</p>
+    <p>Price: ₹{order.item.cost}</p>
+    <p>City: {order.item.stock}</p>
+  </li>
+</Link>
 
-              <p><strong>{order.item.name}</strong></p>
-              <p>Store: {order.item.store}</p>
-              <p>Price: ₹{order.item.cost}</p>
-              <p>City: {order.item.stock}</p>
-            </li>
+            
           ))}
+         
         </ul>
       </div>
     );

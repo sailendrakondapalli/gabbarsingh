@@ -1,18 +1,16 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-// Category images (keep in /public/images/)
 const categories = [
-  { src: "/images/homecareee.jpeg", name: "Personal & Home Care", path: "homecare" },
-  { src: "/images/bekaryyy.jpeg", name: "Bakery", path: "bakery" },
+   { src: "/images/homecareee.jpeg", name: "Personal & Home Care", path: "homecare" },
+ { src: "/images/bekaryyy.jpeg", name: "Bakery", path: "bakery" },
   { src: "/images/eggsss.jpeg", name: "Dairy & Eggs", path: "eggs" },
   { src: "/images/oilsss.jpeg", name: " Oils & Ghee", path: "oils" },
   { src: "/images/spicesss.jpeg", name: "Spices & Condiments", path: "spices" },
-  { src: "/images/pulsesss.jpeg", name: "Pulses & Lentils", path: "pulses" },
+ { src: "/images/pulsesss.jpeg", name: "Pulses & Lentils", path: "pulses" },
   { src: "/images/riceee.jpeg", name: "Grains & Rice", path: "rice" },
-  { src: "/images/fruitsss.jpeg", name: "Fruits", path: "fruits" },
-  { src: "/images/vegiesss.jpeg", name: "Vegetables", path: "vegies" }
-
+   { src: "/images/fruitsss.jpeg", name: "Fruits", path: "fruits" },
+   { src: "/images/vegiesss.jpeg", name: "Vegetables", path: "vegies" }
 ];
 
 class Groceries extends React.Component {
@@ -20,34 +18,108 @@ class Groceries extends React.Component {
     super(props);
     this.state = {
       products: [],
-      userCity: ""
+      userCity: "",
+      loading:true
     };
   }
 
   componentDidMount() {
-    const user = JSON.parse(localStorage.getItem("user"));
-    const city = (user?.city || user?.address || "").trim().toLowerCase();
-
-    if (city) {
-      this.setState({ userCity: city });
-
-      fetch(`https://backendta-fr54.onrender.com/api/products?city=${city}`)
-        .then(res => res.json())
-        .then(data => {
-          // Show only 'topwere' items initially
-           const initialProducts = data.filter(
-            (p) => ["bakery", "eggs", "fruits", "homecare","oils","pulses","rice","spices","vegetables"].includes(p.category?.toLowerCase())
-          );
-          this.setState({ products: initialProducts });
-        })
-        .catch(err => {
-          console.error("❌ Failed to fetch products:", err);
-        });
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        this.fetchProductsFromLocation,
+        (err) => {
+          console.error("❌ Geolocation error in Groceries:", err);
+          this.fallbackToIPorLocalStorage();
+        }
+      );
+    } else {
+      console.warn("⚠️ Geolocation not supported");
+      this.fallbackToIPorLocalStorage();
     }
   }
 
+  fetchProductsFromLocation = async (position) => {
+    const { latitude, longitude } = position.coords;
+    console.log("📍 Groceries page GPS:", latitude, longitude);
+
+    try {
+      const overpassQuery = `
+        [out:json];
+        (
+                   node(around:5000,${latitude},${longitude})["place"];
+
+        );
+        out body;
+      `;
+      const overpassURL = `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(overpassQuery)}`;
+      const response = await fetch(overpassURL);
+      const data = await response.json();
+
+      const citySet = new Set();
+      data.elements.forEach((el) => {
+        if (el.tags?.name) {
+          citySet.add(el.tags.name.trim());
+        }
+      });
+      const nearbyCities = Array.from(citySet);
+      console.log("🍽 Nearby cities for Groceries:", nearbyCities);
+
+      if (nearbyCities.length > 0) {
+        const user = JSON.parse(localStorage.getItem("user")) || {};
+        user.city = nearbyCities[0];
+        localStorage.setItem("user", JSON.stringify(user));
+
+        this.fetchProductsByCityList(nearbyCities, nearbyCities[0]);
+      }
+    } catch (err) {
+      console.error("❌ Groceries fetch failed:", err);
+    }
+  };
+
+  fallbackToIPorLocalStorage = () => {
+    fetch("https://ipapi.co/json/")
+      .then((res) => res.json())
+      .then((locationData) => {
+        const city = locationData.city?.trim();
+        if (city) {
+          console.log("🌐 IP-based city:", city);
+          const user = JSON.parse(localStorage.getItem("user")) || {};
+          user.city = city;
+          localStorage.setItem("user", JSON.stringify(user));
+
+          this.fetchProductsByCityList([city], city);
+        }
+      })
+      .catch(() => {
+        const user = JSON.parse(localStorage.getItem("user"));
+        if (user?.city) {
+          this.fetchProductsByCityList([user.city], user.city);
+        }
+      });
+  };
+  //Groceries
+//["bakery", "eggs", "fruits", "homecare","oils","pulses","rice","spices","vegetables"]
+  fetchProductsByCityList = async (cities, primaryCity) => {
+    try {
+      const cityQueryParam = cities.map(encodeURIComponent).join(",");
+      const res = await fetch(`https://backendta-fr54.onrender.com/api/products?cities=${cityQueryParam}`);
+      const allProducts = await res.json();
+
+      const allowedCategories = ["bakery", "eggs", "fruits", "homecare","oils","pulses","rice","spices","vegetables"];
+      const filtered = allProducts.filter(
+        (p) =>
+          p.category &&
+          allowedCategories.includes(p.category.trim().toLowerCase())
+      );
+
+      this.setState({ products: filtered, userCity: primaryCity,loading:false });
+    } catch (err) {
+      console.error("❌ Error fetching Groceries items:", err);
+    }
+  };
+
   render() {
-    const { products, userCity } = this.state;
+    const { products, userCity,loading } = this.state;
 
     return (
       <div>
@@ -71,32 +143,54 @@ class Groceries extends React.Component {
 
         {/* Product Grid */}
         <div className="product-grid">
-          {products.length > 0 ? (
-            products.map((item, index) => (
-              <Link
-                to={`/product/${item.name}`}
-                state={item}
-                key={index}
-                style={{ textDecoration: "none", color: "inherit" }}
-              >
-                <div className="product-card">
-                  <img src={item.src} alt={item.name}  />
-                  <p className="product-name">{item.name}</p>
-                  <p>From: {item.store}</p>
-                  <p className="product-cost">Cost: ₹{item.cost}</p>
-                  <h5 className="product-stock">📍 {item.stock}</h5>
-                </div>
-              </Link>
-            ))
-          ) : (
-            <p style={{ textAlign: "center", color: "red" }}>
-              🚫 No topwear products found in <b>{userCity}</b>
-            </p>
+  {loading ? (
+    <div className="loader-container">
+      <div className="spinner"></div>
+      <p>Loading fashion products near you...</p>
+    </div>
+  ) : products.length > 0 ? (
+    products.map((item, index) => (
+      <Link
+        to={`/product/${item.name}`}
+        state={item}
+        key={index}
+        style={{ textDecoration: "none", color: "inherit" }}
+      >
+        <div className="product-card">
+          <img src={item.src} alt={item.name} />
+          <p className="product-name">{item.name}</p>
+          <p>From: {item.store}</p>
+          {item.unit !== undefined && (
+            <p className="product-unit">Quantity: {item.unit}</p>
           )}
+          <p className="product-cost">Cost: ₹{item.cost}</p>
+          <h5 className="product-stock">📍 {item.stock}</h5>
         </div>
+      </Link>
+    ))
+  ) : (
+    <p style={{ textAlign: "center", color: "red" }}>
+      🚫 No Fashion products found in <b>{userCity}</b>
+    </p>
+  )}
+</div>
+
       </div>
     );
   }
 }
 
 export default Groceries;
+
+
+
+
+// { src: "/images/homecareee.jpeg", name: "Personal & Home Care", path: "homecare" },
+//   { src: "/images/bekaryyy.jpeg", name: "Bakery", path: "bakery" },
+//   { src: "/images/eggsss.jpeg", name: "Dairy & Eggs", path: "eggs" },
+//   { src: "/images/oilsss.jpeg", name: " Oils & Ghee", path: "oils" },
+//   { src: "/images/spicesss.jpeg", name: "Spices & Condiments", path: "spices" },
+//   { src: "/images/pulsesss.jpeg", name: "Pulses & Lentils", path: "pulses" },
+//   { src: "/images/riceee.jpeg", name: "Grains & Rice", path: "rice" },
+//   { src: "/images/fruitsss.jpeg", name: "Fruits", path: "fruits" },
+//   { src: "/images/vegiesss.jpeg", name: "Vegetables", path: "vegies" }
