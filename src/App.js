@@ -43,6 +43,7 @@ import UploadForm from './UploadForm';
 import CreateAdmin from './pages/CreateAdmin';
 import AdminLogin from './AdminLogin';
 import Eggs from './pages/groceries/Eggs';
+import Profile from './pages/Profile';
 // import AdminPanel from './pages/AdminPanel';
 // import AIChatCommand from './AIChatCommand';
 
@@ -95,7 +96,7 @@ function App() {
         <Route path="/product/:name" element={<ProductDetail/>}/>
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
-        
+        <Route path='/profile' element={<Profile />}/>
 {/* <Route path='/ai' element={<AIChatCommand />} /> */}
       </Routes>
       <Foot />
