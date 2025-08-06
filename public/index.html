@@ -10,11 +10,7 @@
       name="description"
       content="Buy fashion, food, groceries, mobiles, laptops, and more from your local shops with fast delivery at TownyArsenal."
     />
-    <noscript>
-      <div>
-        TownyArsenal - Shop fashion, groceries, and electronics from local stores with fast delivery.
-      </div>
-    </noscript>
+    
     
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
     <!--
@@ -32,9 +28,27 @@
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
     <title>TownyArsenal</title>
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Store",
+  "name": "TownyArsenal",
+  "url": "https://www.townyarsenal.shop",
+  "logo": "https://www.townyarsenal.shop/logo.png",
+  "description": "Shop groceries, fashion, and electronics from your local stores with fast delivery.",
+  "sameAs": [
+    "https://www.instagram.com/townyarsenal"
+  ]
+}
+</script>
+
   </head>
   <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <noscript>
+  TownyArsenal - Shop groceries, fashion, and electronics from your local stores with fast delivery. 
+  Developed By Sailendra Kondapalli
+</noscript>
+
     <div id="root"></div>
     <!--
       This HTML file is a template.
