@@ -169,18 +169,18 @@ fallbackToIPorLocalStorage() {
     const { visibleProducts, filteredProducts, userCity } = this.state;
 
     const images = [
-  { src: '/images/fashion.jpeg', name: 'Fashion' },
-  { src: '/images/grocerie.jpeg', name: 'Groceries' },
-  { src: '/images/onfoodd.png', name: 'Food' },
-  { src: '/images/laptops.jpeg', name: 'Laptops' },
-  { src: '/images/makeup.jpeg', name: 'Makeup' },
-  { src: '/images/mobiles.jpeg', name: 'Mobiles' }
+  { src: '/images/fashionmainnn.jpeg', name: 'Fashion' },
+  { src: '/images/Groceries.png', name: 'Groceries' },
+  { src: '/images/Food.png', name: 'Food' },
+  { src: '/images/Laptops.png', name: 'Laptops' },
+  { src: '/images/Makeup.png', name: 'Makeup' },
+  { src: '/images/Mobiles.png', name: 'Mobiles' }
 ];
 
-
+ 
     const visibleList = filteredProducts.slice(0, visibleProducts);
 
-   return (
+   return ( 
   <div>
     <div className="all">
       {images.map((item, index) => (
@@ -221,9 +221,7 @@ fallbackToIPorLocalStorage() {
               <img src={item.src} alt={item.name} />
               <p className="product-name">{item.name}</p>
               <p>From: {item.store}</p>
-              {item.unit !== undefined && (
-                <p className="product-unit">Quantity: {item.unit}</p>
-              )}
+              
               <p className="product-cost">Cost: ₹{item.cost}</p>
             </div>
           </Link>
@@ -242,5 +240,13 @@ fallbackToIPorLocalStorage() {
 
   }
 }
+
+
+
+
+
+
+
+
 
 export default Body;

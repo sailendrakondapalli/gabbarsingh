@@ -2,12 +2,12 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 const categories = [
-  { src: "/images/biriyani.jpeg", name: "Biriyani", path: "biriyani" },
-  { src: "/images/roti.jpeg", name: "Roti", path: "roti" },
-  { src: "/images/pickle.jpeg", name: "Pickels", path: "pickle" },
-  { src: "/images/milk.jpeg", name: "Milk", path: "milk" },
-  { src: "/images/sweet.jpeg", name: "Sweet", path: "sweet" },
-  { src: "/images/biriyani.jpeg", name: "TownyArsenal Spl", path: "biriyani" }
+  { src: "/images/Biriyani.png", name: "Biriyani", path: "biriyani" },
+  { src: "/images/Roti.png", name: "Roti", path: "roti" },
+  { src: "/images/Pickel.png", name: "Pickels", path: "pickle" },
+  { src: "/images/Milk.png", name: "Milk", path: "milk" },
+  { src: "/images/Sweeet.png", name: "Sweet", path: "sweet" },
+  // { src: "/images/biriyani.jpeg", name: "TownyArsenal Spl", path: "biriyani" }
 ];
 
 //  { src: "/images/topweres.jpg", name: "Top Weres", path: "top-weres" },
@@ -167,9 +167,9 @@ class Food extends React.Component {
           <img src={item.src} alt={item.name} />
           <p className="product-name">{item.name}</p>
           <p>From: {item.store}</p>
-          {item.unit !== undefined && (
+          {/* {item.unit !== undefined && (
             <p className="product-unit">Quantity: {item.unit}</p>
-          )}
+          )} */}
           <p className="product-cost">Cost: ₹{item.cost}</p>
           <h5 className="product-stock">📍 {item.stock}</h5>
         </div>

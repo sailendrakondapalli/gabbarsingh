@@ -85,14 +85,36 @@ class Nav extends React.Component {
           <div className="icons">
             <img src="/images/wish-list.png" alt="WishList" />
             <img src="/images/basket.png" alt="Cart" />
-            <div className="user-profile" style={{ display: "flex", alignItems: "center", gap: "5px" }}>
-              <Link to={isLoggedIn ? "/profile" : "/login"}>
-                <img src="/images/user.png" alt="User" />
-              </Link>
-              <span style={{ fontSize: "14px", color: "#333" }}>
-                {isLoggedIn ? user.name || user.email : "Guest"}
-              </span>
-            </div>
+            <div
+  className="user-profile"
+  style={{
+    marginTop:25,
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    textAlign: "center"
+  }}
+>
+  <Link to={isLoggedIn ? "/profile" : "/login"}>
+    <img src="/images/user.png" alt="User" style={{ width: "30px", height: "30px" }} />
+  </Link>
+
+  <span
+    style={{
+      fontSize: "12px",
+      color: "#333",
+      maxWidth: "80px",
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+      whiteSpace: "nowrap",
+      marginTop: "4px"
+    }}
+    title={isLoggedIn ? user.name || user.email : "Guest"}
+  >
+    {isLoggedIn ? user.name || user.email : "Guest"}
+  </span>
+</div>
+
           </div>
         </div>
       </div>

@@ -2,15 +2,15 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 const categories = [
-   { src: "/images/homecareee.jpeg", name: "Personal & Home Care", path: "homecare" },
- { src: "/images/bekaryyy.jpeg", name: "Bakery", path: "bakery" },
-  { src: "/images/eggsss.jpeg", name: "Dairy & Eggs", path: "eggs" },
-  { src: "/images/oilsss.jpeg", name: " Oils & Ghee", path: "oils" },
-  { src: "/images/spicesss.jpeg", name: "Spices & Condiments", path: "spices" },
- { src: "/images/pulsesss.jpeg", name: "Pulses & Lentils", path: "pulses" },
-  { src: "/images/riceee.jpeg", name: "Grains & Rice", path: "rice" },
-   { src: "/images/fruitsss.jpeg", name: "Fruits", path: "fruits" },
-   { src: "/images/vegiesss.jpeg", name: "Vegetables", path: "vegies" }
+   { src: "/images/Homecaree.png", name: "Personal & Home Care", path: "homecare" },
+ { src: "/images/Bakery.png", name: "Bakery", path: "bakery" },
+  { src: "/images/eggs.png", name: "Dairy & Eggs", path: "eggs" },
+  { src: "/images/Oils.png", name: " Oils & Ghee", path: "oils" },
+  { src: "/images/spices.png", name: "Spices & Condiments", path: "spices" },
+ { src: "/images/Pilses.png", name: "Pulses & Lentils", path: "pulses" },
+  { src: "/images/Rice.png", name: "Grains & Rice", path: "rice" },
+   { src: "/images/Fruitss.png", name: "Fruits", path: "fruits" },
+   { src: "/images/Vegetables.png", name: "Vegetables", path: "vegies" }
 ];
 
 class Groceries extends React.Component {

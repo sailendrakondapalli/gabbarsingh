@@ -151,7 +151,7 @@ class AdminPanel extends Component {
             <input type="file" onChange={this.handleFileChange} /><br /><br />
 
             {/* Unit selector for food items */}
-            {this.state.showUnit && (
+            {/* {this.state.showUnit && (
               <>
                 <select name="unit" value={unit} onChange={this.handleChange}>
                   <option value="">-- Select Quantity --</option>
@@ -160,7 +160,7 @@ class AdminPanel extends Component {
                   <option value="2kg">2 kg</option>
                 </select><br /><br />
               </>
-            )}
+            )} */}
 
             <button type="submit">Upload Product</button>
           </form>

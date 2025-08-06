@@ -2,12 +2,12 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 const categories = [
-   { src: "/images/topweres.jpg", name: "Top Weres", path: "top-weres" },
-  { src: "/images/bottomwere.jpg", name: "Bottom Weres", path: "bottom-weres" },
-  { src: "/images/watches.jpg", name: "Watches", path: "watches" },
-  { src: "/images/shooes.jpg", name: "Shoes", path: "shoes" },
-  { src: "/images/luggage.jpg", name: "Luggage Bags", path: "luguagebags" },
-  { src: "/images/chains.jpg", name: "Chains", path: "chains" }
+   { src: "/images/topwear.png", name: "Top Weres", path: "top-weres" },
+  { src: "/images/bottomwear.png", name: "Bottom Weres", path: "bottom-weres" },
+  { src: "/images/Watches.png", name: "Watches", path: "watches" },
+  { src: "/images/Shoess.png", name: "Shoes", path: "shoes" },
+  { src: "/images/LuggageBags.png", name: "Luggage Bags", path: "luguagebags" },
+  { src: "/images/Chains.png", name: "Chains", path: "chains" }
 ];
 
 
