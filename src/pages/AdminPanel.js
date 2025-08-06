@@ -53,7 +53,7 @@ class AdminPanel extends Component {
     e.preventDefault();
     const { name, category, cost, store, stock, src, city, user, unit } = this.state;
 
-    if (!name || !category || !cost || !store || !stock || !src || !city || (this.state.showUnit && !unit)) {
+    if (!name || !category || !cost || !store || !stock || !src || !city ) {
       this.setState({ message: "Please fill in all fields." });
       return;
     }
@@ -79,7 +79,7 @@ class AdminPanel extends Component {
   };
 
   render() {
-    const { isAuthorized, message, category, city, unit } = this.state;
+    const { isAuthorized, message, category, city } = this.state;
 
     if (!isAuthorized) {
       return (
