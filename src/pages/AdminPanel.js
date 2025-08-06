@@ -146,6 +146,8 @@ class AdminPanel extends Component {
               <option value="Kakinada">Kakinada</option>
               <option value="Hyderabad">Hyderabad</option>
               <option value="Vijayawada">Vijayawada</option>
+              <option value="Tadepallegudem">Tadepallegudem</option>
+
             </select><br /><br />
 
             <input type="file" onChange={this.handleFileChange} /><br /><br />
