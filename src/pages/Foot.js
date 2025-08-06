@@ -24,7 +24,7 @@ class Foot extends Component {
 
           <div className="footer-section">
             <h4 className="footer-heading">Contact</h4>
-            <p className="footer-contact"><FaPhone /> +91 8143724405</p>
+            <p className="footer-contact"><FaPhone /> +91 8143XXXX05</p>
             <p className="footer-contact"><FaEnvelope /> support@townyarsenal.com</p>
             <div className="footer-socials">
               <a href="#"><FaFacebookF /></a>

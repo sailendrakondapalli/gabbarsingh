@@ -44,6 +44,7 @@ import CreateAdmin from './pages/CreateAdmin';
 import AdminLogin from './AdminLogin';
 import Eggs from './pages/groceries/Eggs';
 import Profile from './pages/Profile';
+import About from './pages/About';
 // import AdminPanel from './pages/AdminPanel';
 // import AIChatCommand from './AIChatCommand';
 
@@ -54,6 +55,7 @@ function App() {
     <Router>
       <Nav />
       <Routes>
+        <Route path='/about' element={<About />}/>
         <Route path='/category/bakery' element={<Bakery />} />
         <Route path='/category/sweet' element={<Sweet />} />
         <Route path='/category/roti' element={<Roti />} />
